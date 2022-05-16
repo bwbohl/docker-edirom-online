@@ -4,3 +4,9 @@
 
 data
 logs
+
+##########################################
+# ignore XAR files in add-xars directory #
+##########################################
+
+add-xars/*.xar
