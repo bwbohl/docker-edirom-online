@@ -1,11 +1,11 @@
 FROM stadlerpeter/existdb:6
 MAINTAINER Benjamin W. Bohl
-LABEL org.opencontainers.image.source=https://github.com/bwbohl/docker-Edirom-Online
+LABEL org.opencontainers.image.source=https://github.com/bwbohl/docker-edirom-online
 
 ARG EDIROM_VERSION
-ENV EDIROM_VERSION ${EDIROM_VERSION:-1.1.0-alpha}
+ENV EDIROM_VERSION ${EDIROM_VERSION:-1.0.0-beta}
 
-ADD --chown=wegajetty:wegajetty https://github.com/Edirom/Edirom-Online/releases/download/v1.1.0-alpha/Edirom-Online-1.0.0-alpha.xar ${EXIST_HOME}/autodeploy/
+ADD --chown=wegajetty:wegajetty https://github.com/Edirom/Edirom-Online/releases/download/v${EDIROM_VERSION}/Edirom-Online-${EDIROM_VERSION}.xar ${EXIST_HOME}/autodeploy/
 
 USER wegajetty:wegajetty
 COPY --chown=wegajetty:wegajetty edirom-entrypoint.sh ${EXIST_HOME}/
