@@ -22,7 +22,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   # github repository name as <repo>
   #  might even be set through echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//" if usernames on GitHub and DockerHub are identical
-  DOCKERHUB_IMAGE_NAME: ${{ github.repository }}
+  DOCKERHUB_IMAGE_NAME: docker-edirom-online
 
 
 jobs:
