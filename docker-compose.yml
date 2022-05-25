@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  edirom-online:
+    image: existdb-docker
+    volumes:
+      - exist_data:/opt/exist/data
+      - exist_logs:/opt/exist/logs
+#    environment:
+      #- COMPOSE_PROJECT_NAME
+      #- VERSION="6.0.1"
+      #- MAX_MEMORY ${MAX_MEMORY:-2048}
+      #- EXIST_ENV ${EXIST_ENV:-development}
+      #- EXIST_CONTEXT_PATH ${EXIST_CONTEXT_PATH:-/exist}
+      #- EXIST_DATA_DIR ${EXIST_DATA_DIR:-/opt/exist/data}
+      #- SAXON_JAR ${SAXON_JAR:-/opt/exist/lib/Saxon-HE-9.9.1-8.jar}
+      #- LOG4J_FORMAT_MSG_NO_LOOKUPS true
+    ports:
+      - "8888:8080"
+    #command: echo "Running ${COMPOSE_PROJECT_NAME} on"
+  digilib:
+    image: digilib-docker
+    environment:
+      - DIGILIB_IIIF_API_VERSION="2.1"
+      - DIGILIB_IIIF_INFO_CORS="true"
+      - DIGILIB_IIIF_IMAGE_CORS="true"
+      - DIGILIB_IIIF_PREFIX="IIIF"
+      - DIGILIB_IIIF_SLASH_REPLACEMENT="!"
+    ports:
+      - "8889:8080"
+
+volumes:
+  exist_data: {}
+  exist_logs: {}
+#  digilib_data: {}
