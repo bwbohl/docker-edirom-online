@@ -24,10 +24,44 @@ env:
   #  might even be set through echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//" if usernames on GitHub and DockerHub are identical
   DOCKERHUB_IMAGE_NAME: docker-edirom-online
 
+  # Edirom Online
+  EDIROM_REPO: https://github.com/Edirom/Edirom-Online
+  EDIROM_BRANCH: develop
+  EDIROM_DIR: edirom-dir
+
 
 jobs:
-  build:
+  build-edirom:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
+    steps:
+    - name: Checkout Edirom Online repository
+      uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      with:
+        path: ${{ env.EDIROM_DIR }}
+        ref: ${{ env.EDIROM_BRANCH }}
+        repository: ${{ env.EDIROM_REPO }}
+        submodules: 'recursive'
+    
+    - name: Build Edirom Online from ${{ github.ref }} at ${{ github.sha }}
+      run: |
+        cd ${{ env.EDIROM_DIR }}
+        docker run --rm -v $(pwd):/app -w /app --entrypoint ./build.sh bwbohl/sencha-cmd
+    
+    #- name: Get short sha
+    #  uses: benjlevesque/short-sha@599815c8ee942a9616c92bcfb4f947a3b670ab0b # v3.0
+    #  id: short-sha
+    #  with:
+    #    length: 7
+
+    #- name: Build Edirom Online from ${{ github.ref }} at ${{ github.sha }}
+    #  run: docker run --rm -v $(pwd):/app -w /app --entrypoint ./build.sh bwbohl/sencha-cmd
+
+
+  build:
+    needs: build-edirom
     runs-on: ubuntu-latest
     permissions:
       contents: read
