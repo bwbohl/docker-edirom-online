@@ -25,7 +25,7 @@ env:
   DOCKERHUB_IMAGE_NAME: docker-edirom-online
 
   # Edirom Online
-  EDIROM_REPO: https://github.com/Edirom/Edirom-Online
+  EDIROM_REPO: Edirom/Edirom-Online
   EDIROM_BRANCH: develop
   EDIROM_DIR: edirom-dir
 
