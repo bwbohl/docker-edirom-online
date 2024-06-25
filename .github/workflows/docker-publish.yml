@@ -24,10 +24,51 @@ env:
   #  might even be set through echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//" if usernames on GitHub and DockerHub are identical
   DOCKERHUB_IMAGE_NAME: docker-edirom-online
 
+  # Edirom Online
+  EDIROM_REPO: Edirom/Edirom-Online
+  EDIROM_BRANCH: develop
+  EDIROM_DIR: edirom-dir
+
 
 jobs:
-  build:
+  build-edirom:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
+    steps:
+    - name: Checkout Edirom Online repository
+      uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      with:
+        path: ${{ env.EDIROM_DIR }}
+        ref: ${{ env.EDIROM_BRANCH }}
+        repository: ${{ env.EDIROM_REPO }}
+        submodules: 'recursive'
+
+    - name: Build Edirom Online from ${{ github.ref }} at ${{ github.sha }}
+      run: |
+        cd ${{ env.EDIROM_DIR }}
+        docker run --rm -v $(pwd):/app -w /app --entrypoint ./build.sh bwbohl/sencha-cmd
+
+    #- name: Get short sha
+    #  uses: benjlevesque/short-sha@599815c8ee942a9616c92bcfb4f947a3b670ab0b # v3.0
+    #  id: short-sha
+    #  with:
+    #    length: 7
+
+    #- name: Build Edirom Online from ${{ github.ref }} at ${{ github.sha }}
+    #  run: docker run --rm -v $(pwd):/app -w /app --entrypoint ./build.sh bwbohl/sencha-cmd
+
+    - name: Upload Edirom Online artifact
+      uses: actions/upload-artifact@v4
+      with:
+        if-no-files-found: 'error'
+        path: ${{ github.workspace }}/${{ env.EDIROM_DIR }}/build-xar/Edirom-Online-*.xar
+        retention-days: 90
+
+
+  build:
+    needs: build-edirom
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -40,6 +81,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Download Edirom artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: add-xars
+          #pattern: Edirom-Online*.xar
+
+      - name: list downloaded files
+        run: ls -R add-xars
+
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -47,7 +97,7 @@ jobs:
         uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20
         with:
           cosign-release: 'v2.2.4'
-          
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -67,6 +117,7 @@ jobs:
 
       # Login against DockerHub registry except on PR
       - name: Log in to DockerHub
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446
         with:
           username: ${{ secrets.BWBOHL_DOCKERHUB_USERNAME }}
@@ -96,6 +147,7 @@ jobs:
             linux/arm64/v8
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: EDIROM_VERSION=dev
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
@@ -103,6 +155,7 @@ jobs:
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
       - name: Sign the images with GitHub OIDC Token
+        if: github.event_name != 'pull_request'
         env:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
           TAGS: ${{ steps.meta.outputs.tags }}

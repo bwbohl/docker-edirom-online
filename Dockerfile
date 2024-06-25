@@ -8,9 +8,10 @@ ENV EXIST_DEFAULT_APP_PATH=xmldb:exist:///db/apps/Edirom-Online
 ENV EXIST_CONTEXT_PATH=/
 ENV EXIST_ENV=development
 
-ADD --chown=wegajetty:wegajetty https://github.com/Edirom/Edirom-Online/releases/download/v${EDIROM_VERSION}/Edirom-Online-${EDIROM_VERSION}.xar ${EXIST_HOME}/autodeploy/
+#ADD --chown=wegajetty:wegajetty https://github.com/Edirom/Edirom-Online/releases/download/v${EDIROM_VERSION}/Edirom-Online-${EDIROM_VERSION}.xar ${EXIST_HOME}/autodeploy/
 
 USER wegajetty:wegajetty
+COPY add-xars/**/*.xar ${EXIST_HOME}/autodeploy/
 COPY --chown=wegajetty:wegajetty edirom-entrypoint.sh ${EXIST_HOME}/
 CMD ["./edirom-entrypoint.sh"]
 
