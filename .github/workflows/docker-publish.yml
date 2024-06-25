@@ -81,6 +81,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Download Edirom artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: add-xars
+      
+      - name: list downloaded files
+        run: ls -R add-xars
+
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -137,6 +145,7 @@ jobs:
             linux/arm64/v8
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: EDIROM_VERSION=dev
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
