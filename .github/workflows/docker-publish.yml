@@ -59,6 +59,13 @@ jobs:
     #- name: Build Edirom Online from ${{ github.ref }} at ${{ github.sha }}
     #  run: docker run --rm -v $(pwd):/app -w /app --entrypoint ./build.sh bwbohl/sencha-cmd
 
+    - name: Upload Edirom Online artifact
+      uses: actions/upload-artifact@v4
+      with:
+        if-no-files-found: 'error'
+        path: ${{ github.workspace }}/${{ env.EDIROM_DIR }}/build-xar/Edirom-Online-*.xar
+        retention-days: 90
+
 
   build:
     needs: build-edirom
