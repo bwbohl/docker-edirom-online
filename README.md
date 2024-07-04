@@ -12,4 +12,4 @@ docker run -p 8080:8080 -v `pwd`/add-xars:/var/add-xars ghcr.io/bwbohl/docker-ed
 
 The tags reflect the Edirom-Online EDIROM_VERSION. Current Tags are:
 
-* 1
+* latest: nightly build of the Edirom-Online repo’s develop branch
