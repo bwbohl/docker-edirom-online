@@ -14,6 +14,12 @@ on:
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ main ]
+  repository_dispatch:
+    owner: 'baz-ga'
+    repo: 'Edirom-Online'
+    event_type: 'pre-release'
+  workflow_dispatch:
+    
 
 env:
   # Use docker.io for Docker Hub if empty
