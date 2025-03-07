@@ -48,7 +48,7 @@ jobs:
     - name: Build Edirom Online from ${{ github.ref }} at ${{ github.sha }}
       run: |
         cd ${{ env.EDIROM_DIR }}
-        docker run --rm -v $(pwd):/app -w /app --entrypoint ./build.sh bwbohl/sencha-cmd
+        docker run --rm -v $(pwd):/app -w /app --entrypoint ./build.sh bwbohl/sencha-cmd:v2.0.0
 
     #- name: Get short sha
     #  uses: benjlevesque/short-sha@599815c8ee942a9616c92bcfb4f947a3b670ab0b # v3.0
