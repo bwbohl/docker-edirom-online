@@ -7,7 +7,7 @@ name: docker publish
 
 on:
   schedule:
-    - cron: '44 9 * * *'
+    - cron: '0 3 */60 * *'
   push:
     branches: [ main ]
     # Publish semver tags as releases.
@@ -54,7 +54,7 @@ jobs:
     - name: Build Edirom Online from ${{ github.ref }} at ${{ github.sha }}
       run: |
         cd ${{ env.EDIROM_DIR }}
-        docker run --rm -v $(pwd):/app -w /app --entrypoint ./build.sh bwbohl/sencha-cmd
+        docker run --rm -v $(pwd):/app -w /app bwbohl/sencha-cmd:2.1.0 ./build.sh
 
     #- name: Get short sha
     #  uses: benjlevesque/short-sha@599815c8ee942a9616c92bcfb4f947a3b670ab0b # v3.0
@@ -100,7 +100,7 @@ jobs:
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20
+        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a
         with:
           cosign-release: 'v2.2.4'
 
@@ -109,7 +109,7 @@ jobs:
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@d70bba72b1f3fd22344832f00baa16ece964efeb
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -133,7 +133,7 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804
         with:
           #images: |
           #  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
@@ -145,7 +145,7 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@15560696de535e4014efeff63c48f16952e52dd1
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
