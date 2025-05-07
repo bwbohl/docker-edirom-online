@@ -3,7 +3,7 @@ LABEL org.opencontainers.image.authors="Benjamin W. Bohl https://github.com/bwbo
 LABEL org.opencontainers.image.source=https://github.com/bwbohl/docker-edirom-online
 
 ARG EDIROM_VERSION
-ENV EDIROM_VERSION ${EDIROM_VERSION:-1.0.0}
+ENV EDIROM_VERSION=${EDIROM_VERSION:-1.0.0}
 ENV EXIST_DEFAULT_APP_PATH=xmldb:exist:///db/apps/Edirom-Online
 ENV EXIST_CONTEXT_PATH=/
 ENV EXIST_ENV=development
