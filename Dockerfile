@@ -1,5 +1,5 @@
 FROM stadlerpeter/existdb:6
-MAINTAINER Benjamin W. Bohl
+LABEL org.opencontainers.image.authors="Benjamin W. Bohl https://github.com/bwbohl"
 LABEL org.opencontainers.image.source=https://github.com/bwbohl/docker-edirom-online
 
 ARG EDIROM_VERSION
