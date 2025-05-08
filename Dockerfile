@@ -1,4 +1,6 @@
-FROM stadlerpeter/existdb:6
+# STAGE 1
+FROM alpine:3.21.3 AS xar-fetcher
+
 # LABEL about this image
 LABEL org.opencontainers.image.title="Docker Edirom-Online"
 LABEL org.opencontainers.image.description="Dockerimage for running Edirom-Online"
@@ -12,17 +14,51 @@ LABEL org.opencontainers.image.source="https://github.com/bwbohl/docker-edirom-o
 LABEL org.opencontainers.image.url="https://github.com/bwbohl/docker-edirom-online"
 LABEL org.opencontainers.image.version="1.0.0"
 
+# setup build arguments
 ARG EDIROM_VERSION
+
+# setup environment variables
 ENV EDIROM_VERSION=${EDIROM_VERSION:-1.0.0}
+
+# get EDIROM
+## copy gh-asset-downloader to xar-fetcher
+COPY gitmodules/gh-asset-downloader /opt/gh-asset-downloader
+
+## add requirements to baseimage
+RUN apk add --no-cache bash curl libxml2-utils ncurses
+
+## switch workdir
+WORKDIR /opt/gh-asset-downloader
+
+## run gh-asset-downloader for Edirom Online
+RUN --mount=type=secret,id=GITHUB_API_TOKEN,target=/root/.secrets \
+    /bin/bash -l /opt/gh-asset-downloader/gh-asset-downloader.sh Edirom Edirom-Online "v$EDIROM_VERSION" .xar \
+    && mkdir /tmp/add-xars \
+    && cp Edirom-Online-*.xar /tmp/add-xars/
+
+# get ADD-XARS
+## copy add-xars directory to xar-fetcher
+COPY add-xars/*.xar /tmp/add-xars/
+
+# STAGE 2
+FROM stadlerpeter/existdb:6
+
+# setup environment variables
 ENV EXIST_DEFAULT_APP_PATH=xmldb:exist:///db/apps/Edirom-Online
 ENV EXIST_CONTEXT_PATH=/
 ENV EXIST_ENV=development
 
-#ADD --chown=wegajetty:wegajetty https://github.com/Edirom/Edirom-Online/releases/download/v${EDIROM_VERSION}/Edirom-Online-${EDIROM_VERSION}.xar ${EXIST_HOME}/autodeploy/
-
+# switch user to stadlerpeter/existdb user
 USER wegajetty:wegajetty
-COPY add-xars/**/*.xar ${EXIST_HOME}/autodeploy/
+
+# copy XARs from xar-fetcher (STAGE 1)
+COPY --from=xar-fetcher /tmp/add-xars/*.xar ${EXIST_HOME}/autodeploy/
+
+# copy edirom-entrypoint.sh
 COPY --chown=wegajetty:wegajetty edirom-entrypoint.sh ${EXIST_HOME}/
+
+# on run execute entrypoint
 CMD ["./edirom-entrypoint.sh"]
 
+# expose default port
 EXPOSE 8080
