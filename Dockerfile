@@ -1,4 +1,4 @@
-FROM stadlerpeter/existdb:6.2
+FROM stadlerpeter/existdb:6.4
 MAINTAINER Benjamin W. Bohl
 LABEL org.opencontainers.image.source=https://github.com/bwbohl/docker-edirom-online
 
