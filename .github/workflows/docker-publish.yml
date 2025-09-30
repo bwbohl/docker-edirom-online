@@ -50,6 +50,7 @@ jobs:
         ref: ${{ env.EDIROM_BRANCH }}
         repository: ${{ env.EDIROM_REPO }}
         submodules: 'recursive'
+        token:  ${{ github.token }}
 
     - name: Build Edirom Online from ${{ github.ref }} at ${{ github.sha }}
       run: |
