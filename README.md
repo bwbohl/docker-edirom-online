@@ -1,4 +1,16 @@
-# docker-Edirom-Online
+> [!CAUTION]
+> This repository has been archived. Development continues at:
+> https://github.com/BAZ-GA/docker-edirom-online
+>
+> This was the initial proof-of-concept. The production version
+> with extensive features is maintained by the
+> Bernd Alois Zimmermann-Gesamtausgabe
+>
+> ## Original License
+> This repository was originally MIT licensed. The successor project
+> uses GNU GPL v.3 to match Edirom Online's license.
+
+# docker-Edirom-Online [ARCHIVED]
 
 A dockerimage for deploying Edirom-Online instances
 
